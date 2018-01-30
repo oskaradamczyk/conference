@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/swiper.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <script src="{{ asset('js/websocket.js') }}"></script>
+    <script src="{{ asset('js/jquery.js') }}"></script>
+    <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        html, body {
+            max-height: 100vh;
+            overflow: hidden;
+            margin: 0;
+            padding:0;
+            background: #0462d1;
+        }
+
+        .swiper-slide.locked-slide:after {
+            display: block;
+            background: #0462d1;
+            width: 100%;
+            height: 100%;
+            content: "SLAJD ZABLOKOWANY";
+            opacity:1;
+            text-align: center;
+            color: #fff;
+            padding: 40vh;
+            font-size: 40px;
+        }
+
+        .swiper-slide {
+            height: 100vh;
+            width: 100vw;
+            background-size: cover;
+            background-position: center center;
+        }
+
+        .register {
+            z-index: 9999;
+            padding-top: 290px;
+        }
+    </style>
+</head>
+<body>
+
+
+    {#<div id="agendaButton" class="open-modal" data-target="agenda">agenda</div>#}
+
+    <div class="text-center register app-modal" style="display: none;">
+        <form id="register-guest" class="form-signin">
+             {#TODO Ostylowac#}
+            <h1 class="h3 mb-3 font-weight-normal">Dołącz do konferencji</h1>
+            <label for="inputEmail" class="sr-only">Email</label>
+            <input type="email" id="inputEmail" class="form-control" placeholder="Podaj adres e-mail" required autofocus>
+            <div class="checkbox mb-3">
+                <label>
+                    <input type="checkbox" value="1" required> Wyrażam zgodę na przetwarzanie blablabla
+                </label>
+            </div>
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Dołącz</button>
+        </form>
+    </div>
+
+
+
+    <div class="swiper-container">
+        <div class="swiper-wrapper">
+        </div>
+    </div>
+
+    <div class="tab-content content-wrapper">
+        <div class="tab-pane knowledge-base" id="knowledge-base" aria-labelledby="nav-knowledge-base">
+            <div class="close">
+                <span>&times;</span>
+            </div>
+            <div class="items-wrapper"></div>
+
+        </div>
+        <div class="left-menu tab-pane" id="left-menu" aria-labelledby="nav-left-menu">
+            <div class="close">
+                <span>&times;</span>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-6 lecturer">
+                        <div class="nav nav-pills" id="left-menu-lecture" role="tablist" aria-orientation="vertical">
+                            <h4>Tytuł sekcji</h4>
+                            <a class=" active" id="lecture1-tab" data-toggle="pill" href="#lecture1" role="tab" aria-controls="lecture1" aria-selected="true">
+                                <span>Wykład 1</span>
+                            </a>
+                            <a class="" id="lecture2-tab" data-toggle="pill" href="#lecture2" role="tab" aria-controls="lecture2" aria-selected="false">
+                                <span>Wykład 2</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-6 slides">
+
+                        <div class="tab-content" id="left-menu-slides-list">
+                            <div class="tab-pane fade show active" id="lecture1" role="tabpanel" aria-labelledby="lecture1">
+                                <img src="/img1.jpg" alt="obrazek1" style="width: 149px; height: 112px;display: block;">
+                                <p>Slajd 1</p>
+                                <img src="/img1.jpg" alt="obrazek1" style="width: 149px; height: 112px;display: block;">
+                                <p>Slajd 1</p>
+
+                            </div>
+                            <div class="tab-pane fade" id="lecture2" role="tabpanel" aria-labelledby="lecture2">
+                                <img src="/img2.jpg" alt="obrazek2" style="width: 149px; height: 112px;display: block;">
+                                <p>Slazjd 2</p>
+                                <img src="/img2.jpg" alt="obrazek2" style="width: 149px; height: 112px;display: block;">
+                                <p>Slajd 2</p>
+                                <img src="/img2.jpg" alt="obrazek2" style="width: 149px; height: 112px;display: block;">
+                                <p>Slajd 2</p>
+                                <img src="/img2.jpg" alt="obrazek2" style="width: 149px; height: 112px;display: block;">
+                                <p>Slajd 2</p>
+                                <img src="/img2.jpg" alt="obrazek2" style="width: 149px; height: 112px;display: block;">
+                                <p>Slajd 2</p>
+                                <img src="/img2.jpg" alt="obrazek2" style="width: 149px; height: 112px;display: block;">
+                                <p>Slajd 2</p>
+                                <img src="/img2.jpg" alt="obrazek2" style="width: 149px; height: 112px;display: block;">
+                                <p>Slajd 2</p>
+                                <img src="/img2.jpg" alt="obrazek2" style="width: 149px; height: 112px;display: block;">
+                                <p>Slajd 2</p>
+                                <img src="/img2.jpg" alt="obrazek2" style="width: 149px; height: 112px;display: block;">
+                                <p>Slajd 2</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane agenda" id="agenda" aria-labelledby="nav-agenda">
+            <div class="close">
+                <span>&times;</span>
+            </div>
+            <div class="agenda-content"></div>
+        </div>
+
+        <div class="tab-pane questions" id="questions" aria-labelledby="nav-questions">
+            <div class="close">
+                <span>&times;</span>
+            </div>
+            <form id="question">
+                <h3>Zadaj pytanie prowadzącemu</h3>
+                <div class="line80"></div>
+                <div class="form-group">
+                    <textarea class="form-control" id="question-textarea" rows="8" placeholder="Moje pytanie"></textarea>
+                </div>
+                <button type="submit" class="btn btn-success float-right">Wyślij moje pytanie</button>
+            </form>
+        </div>
+        <div class="tab-pane note" id="note-container" aria-labelledby="nav-note">
+            <div class="close">
+                <span>&times;</span>
+            </div>
+            <form id="note">
+                <h3>Notatka z wykładu</h3>
+                <div class="line80"></div>
+                <div class="form-group">
+                    <textarea class="form-control" id="question-textarea" rows="8" placeholder="Moja notatka"></textarea>
+                </div>
+                <button type="submit" class="btn btn-success float-right">Wyślij notatkę</button>
+            </form>
+        </div>
+    </div>
+    <div class="container-fluid fixed-bottom footer-menu">
+        <div class="row">
+            <div class="col-md">
+                <ul class="nav justify-content-center">
+                    <li class="nav-item">
+                        <a class="nav-link" id="nav-knowledge-base" href="#knowledge-base" aria-controls="knowledge-base" data-toggle="tab">Baza Wiedzy</a>
+                    </li>
+                    <li class="nav-item" >
+                        <a class="nav-link" id="nav-left-menu" href="#left-menu" data-toggle="tab"  aria-controls="left-menu">Wykłady</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="nav-agenda" href="#agenda" data-toggle="tab"  aria-controls="agenda">Agenda</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="nav-questions" href="#questions" data-toggle="tab"  aria-controls="questions">Pytanie</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="nav-note" href="#note-container" data-toggle="tab" aria-controls="note-container">Notatka</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="live" style="cursor: pointer">Na żywo</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ asset('js/main.js') }}"></script>
+    <script src="{{ asset('js/swiper.js') }}"></script>
+    {{ ws_client() }}
+    <script>
+        var live = true;
+
+        if (!localStorage.getItem('guest_id')) {
+            $('.register').slideDown();
+        }
+        sessionStorage.clear();
+        $(document).ready(function(){
+
+            $.get( "{{ path('get_section') }}", function( data ) {
+                console.log(data);
+                $.each(data.knowledge_base.medias, function( index, value ) {
+                    console.log(value);
+                    $('#knowledge-base .items-wrapper').append('<div class="item item1"><p>'+ data.name +'</p><p>'+value.name+'</p><button data-file-id="'+value.id+'" class="order-file btn btn-success">Zamów</button></div>');
+                });
+
+                $('.agenda-content').append(data.agenda);
+            });
+
+            var mySwiper = new Swiper ('.swiper-container', {});
+            var jqxhr = $.get( "{{ path('get_lecture') }}", function(data) {
+                console.log(data);
+                sessionStorage.setItem('lecture_id',data.id);
+                $.each(data.slides, function( index, value ) {
+                    var slideClass = '';
+                    if (!value.active) {
+                        slideClass = 'locked-slide';
+                    }
+                    else {
+                        sessionStorage.setItem('active',index+1);
+                    }
+                    if (value.type === "{{ constant('AppBundle\\Entity\\Survey::MEDIA_TYPE') }}") {
+                        var form = '<div class="swiper-slide survey-slide ' + slideClass + '" data-id="' + value.id + '">'
+                            + '<form id="submit-answer" class="">'
+                            + '<div class="survey-name"><h1 class="title">' + value.media.name + '</h1></div>';
+                        $.each(value.media.questions, function (index, value) {
+                            form += '<div class="question" data-id="' + value.id + '"><h3 class="question-title">' + value.content + '</h3>';
+                            var inputType;
+                            if (value.type === "{{ constant('AppBundle\\Entity\\SurveyQuestion::SINGLE_QUESTION_TYPE') }}") {
+                                inputType = 'radio';
+                            } else {
+                                {# TODO others types of survey question #}
+                            }
+                            var questionId = value.id;
+                            $.each(value.possible_answers, function (index, value) {
+                                form += '<div class="' + inputType + '"><label><input name="answer_' + questionId + '" type="' + inputType + '" class="possible-answer" data-id="' + value.id + '">' + value.content + '</label></div>';
+                            });
+                            form += '</div>';
+                        });
+                        form += ' <button class="btn btn-lg btn-primary btn-block survey-answer-btn" type="submit">Odpowiedz</button></form></div>';
+                        $('.swiper-wrapper').append(form);
+                    } else if (value.type === "{{ constant('AppBundle\\Entity\\Image::MEDIA_TYPE') }}") {
+                        $('.swiper-wrapper').append('<div class="swiper-slide img-slide ' + slideClass + '" data-id="' + value.id + '" style="background-image: url(' + value.media.file_url + ');"></div>');
+                    } else {
+                        $('.swiper-wrapper').append('<div class="swiper-slide html-slide ' + slideClass + '" data-id="' + value.id + '">' + value.media.content + '</div>');
+                    }
+                });
+            })
+            .done(function () {
+                mySwiper.update();
+                mySwiper.slideTo(sessionStorage.getItem('active')-1,0,false);
+                console.log('Slides Loaded.');
+                $('#live').removeClass('not-live');
+            })
+            .fail(function(e) {
+                alert( "error" );
+                console.log(e);
+            });
+            mySwiper.on('slideChangeTransitionEnd', function () {
+                live = false;
+                $('#live').addClass('not-live');
+                if($('.swiper-slide-active').hasClass('locked-slide')) {
+                    mySwiper.allowSlideNext = false;
+                }
+                else {
+                    mySwiper.allowSlideNext = true;
+                }
+            });
+
+            var webSocket = WS.connect("ws://"+websocketUrl+"/ws/");
+
+            webSocket.on("socket/connect", function(session){
+                console.log("Successfully Connected!");
+
+                session.subscribe("conference/channel", function(uri, payload){
+                    console.log("Received message", payload.msg);
+                    if(payload.msg.action == 'reload') {
+                        window.location.reload();
+                    }
+                    else if(payload.msg.action == 'next_slide') {
+                        sessionStorage.setItem('active',parseInt(sessionStorage.getItem('active'))+1);
+                        $($('.swiper-slide')[parseInt(sessionStorage.getItem('active'))-1]).removeClass('locked-slide');
+                        if(live) {
+                            mySwiper.slideNext(300,false);
+                        }
+                        mySwiper.allowSlideNext = true;
+
+                        if(payload.msg.forceLive == true ) {
+                            $('#live').click();
+                        }
+                    }
+                    else if (payload.msg.action == 'prev_slide') {
+                        sessionStorage.setItem('active',parseInt(sessionStorage.getItem('active'))-1);
+
+                        if(live) {
+                            mySwiper.slidePrev(300,false);
+                        }
+                    }
+                });
+                session.publish("conference/channel", "This is a message!");
+            });
+
+
+            webSocket.on("socket/disconnect", function(error){
+                console.log("Disconnected for " + error.reason + " with code " + error.code);
+            });
+
+            $('#live').click(function () {
+                live = true;
+                $(this).removeClass('not-live');
+                mySwiper.slideTo(sessionStorage.getItem('active')-1,300,false);
+                mySwiper.allowSlideNext = true;
+
+            });
+
+            $('.swiper-wrapper').on('click' , 'button.survey-answer-btn', function(){
+                var that = this;
+                var form = $('.swiper-slide-active form');
+                var answers = [];
+                $.each( form.children('.question'), function ( index, value ){
+                    var question = $(value).data('id');
+                    $.each( $(value).find('input:checked'), function ( index, value ){
+                        answers.push({
+                            question: question,
+                            possibleAnswer: $(value).data('id')
+                        });
+                    });
+                });
+                form.submit(function(e){
+                    e.preventDefault();
+                    $.post({
+                        url: "{{ path('post_survey_answer') }}",
+                        data: {
+                            survey_answer:{
+                                slide: form.parent('.survey-slide').data('id'),
+                                guest: localStorage.getItem("guest_id"),
+                                answers: answers
+                            }
+                        },
+                        success: function() {
+                            $(that).attr('disabled', true);
+                        }
+                    });
+                });
+            });
+
+            $('#register-guest').submit(function (e) {
+                e.preventDefault();
+                $('.register .btn').attr('disabled',true);
+                $.post( "{{ path('post_guest') }}", { 'guest[email]': $('#inputEmail').val()})
+                    .done(function( data ) {
+                        var orders = data.data.guest.orders_ids;
+                        localStorage.setItem("guest_id",data.data.guest.id);
+                        sessionStorage.setItem("guest_orders",JSON.stringify(orders));
+                        $('#knowledge-base .item').each(function () {
+                            var orderButton = $(this).children('.order-file');
+                            if ($.inArray(orderButton.data('file-id'), orders) >= 0) {
+                                orderButton.attr('disabled', true);
+                                orderButton.text('Zamówiony');
+                            }
+                        });
+                        $('.register').slideUp();
+                    })
+                    .fail(function (data) {
+                        $('.register .btn').attr('disabled',false);
+                    });
+
+            });
+
+            $('#note').submit(function (e) {
+                var that = this;
+                $(".alert").alert('close');
+                e.preventDefault();
+                $('#note .btn').attr('disabled',true);
+                $.post( "{{ path('post_note') }}", {
+                    'note[guest]': sessionStorage.getItem('guest_id'),
+                    'note[slide]': $('.swiper-slide-active').data('id'),
+                    'note[content]': $('#note textarea').val()
+                })
+                    .done(function() {
+                        $('#note .btn').attr('disabled',false);
+                        $(that).prepend('<div class="alert alert-success" role="alert">Notatka została wysłana poprawnie</div>');
+                        $(that).find('textarea').val('');
+                        setTimeout(function () {
+                            $(".alert").alert('close');
+                        }, 3000);
+                    })
+                    .fail(function (data) {
+                        console.log(e);
+                        $('#note .btn').attr('disabled',false);
+                        $('#question .btn').attr('disabled',false);
+                        $(that).prepend('<div class="alert alert-danger" role="alert">Wystąpił błąd podczas wysyłania notatki</div>');
+                        setTimeout(function () {
+                            $(".alert").alert('close');
+                        },3000);
+                    });
+
+            });
+
+
+            $('#question').submit(function (e) {
+                var that = this;
+                $(".alert").alert('close');
+
+                e.preventDefault();
+                $('#question .btn').attr('disabled',true);
+                $.post( "{{ path('post_question') }}", {
+                    question: {
+                        content: $('#question textarea').val(),
+                        lecture: sessionStorage.getItem('lecture_id')
+                    }
+                })
+                    .done(function() {
+                        $('#question .btn').attr('disabled',false);
+                        $(that).prepend('<div class="alert alert-success" role="alert">Pytanie zostało wysłane poprawnie</div>');
+                        $(that).find('textarea').val('');
+                        setTimeout(function () {
+                            $(".alert").alert('close');
+                        }, 3000);
+
+                    })
+                    .fail(function (e) {
+                        console.log(e);
+                        $('#question .btn').attr('disabled',false);
+                        $(that).prepend('<div class="alert alert-danger" role="alert">Wystąpił błąd podczas wysyłania pytania</div>');
+                        setTimeout(function () {
+                            $(".alert").alert('close');
+                        },3000);
+                    });
+            });
+
+
+            $('#knowledge-base').on('click', '.order-file', function(e){
+                e.preventDefault();
+                console.log(sessionStorage.getItem("guest_orders"));
+                var that = this;
+                var orders = JSON.parse(sessionStorage.getItem("guest_orders"));
+                orders.push($(that).data('file-id'));
+                $.ajax({
+                    url: "{{ path('patch_guest') }}",
+                    type: 'PATCH',
+                    data: {
+                        id: localStorage.getItem("guest_id"),
+                        guest: {
+                            "orders": orders
+                        }
+                    },
+                    success: function() {
+                        sessionStorage.setItem("guest_orders", JSON.stringify(orders));
+                        $(that).attr('disabled',true);
+                        $(that).text('Zamówiony');
+                        console.log(JSON.parse(sessionStorage.getItem("guest_orders")));
+                    }
+                });
+            });
+
+
+        });
+
+    </script>
+</body>
+</html>

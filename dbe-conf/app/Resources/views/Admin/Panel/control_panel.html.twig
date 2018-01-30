@@ -1,0 +1,44 @@
+{% extends sonata_block.templates.block_base %}
+
+{% import ":Admin/Panel/Macro:buttons_macro.html.twig" as button_macro %}
+
+{% block block %}
+    <div class="container-fluid box">
+        <div class="row box-header">
+            <h3 class="box-title">{{ context.settings.title|trans }}</h3>
+        </div>
+        <div class="row box-body">
+            {{ button_macro.buttons(buttons) }}
+        </div>
+        <div class="row box-body">
+            <div id="log-screen" class="col-xs-12 log-screen"></div>
+        </div>
+    </div>
+    <script src="{{ asset('js/websocket.js') }}"></script>
+    {{ ws_client() }}
+    <script>
+        $(document).ready(function () {
+            var webSocket = WS.connect("ws://" + websocketUrl + "/ws/");
+            webSocket.on("socket/connect", function (session) {
+                session.subscribe("conference/channel", function (uri, payload) {
+                    $('#log-screen').append(
+                        '['
+                        + (newDate = new Date()).today()
+                        + " " + newDate.timeNow()
+                        + '] '
+                        + JSON.stringify(payload.msg).replace()
+                        + '</br>'
+                    );
+                });
+            });
+        });
+
+        Date.prototype.today = function () {
+            return ((this.getDate() < 10) ? "0" : "") + this.getDate() + "-" + (((this.getMonth() + 1) < 10) ? "0" : "") + (this.getMonth() + 1) + "-" + this.getFullYear();
+        };
+
+        Date.prototype.timeNow = function () {
+            return ((this.getHours() < 10) ? "0" : "") + this.getHours() + ":" + ((this.getMinutes() < 10) ? "0" : "") + this.getMinutes() + ":" + ((this.getSeconds() < 10) ? "0" : "") + this.getSeconds();
+        };
+    </script>
+{% endblock %}

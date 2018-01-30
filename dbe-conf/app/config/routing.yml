@@ -1,0 +1,11 @@
+app:
+    resource: routing_app.yml
+
+admin:
+    resource: routing_admin.yml
+
+liip_imagine:
+    resource: routing_liip.yml
+
+fos_user:
+    resource: "@FOSUserBundle/Resources/config/routing/all.xml"

@@ -1,0 +1,9 @@
+sonata_block:
+    default_contexts: [cms]
+    blocks:
+        AppBundle\Block\ControlPanelBlockService: ~
+        sonata.admin.block.control_panel:
+            contexts: [admin]
+
+        sonata.admin.block.admin_list:
+            contexts: [admin]

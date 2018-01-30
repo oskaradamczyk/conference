@@ -1,0 +1,179 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    AppBundle\:
+        resource: '../../src/AppBundle/*'
+        exclude: '../../src/AppBundle/{Entity,Repository,Tests,Service,Handler,Util,Decorator}'
+
+    AppBundle\Controller\:
+        resource: '../../src/AppBundle/Controller'
+        public: true
+        calls: [[setContainer, ['@service_container']]]
+        tags: ['controller.service_arguments']
+
+    AppBundle\Admin\SectionAdmin:
+        arguments: [~, AppBundle\Entity\Section, ~]
+        tags:
+          - { name: sonata.admin, manager_type: orm, group: Sekcje, label: Sekcje, on_top: true, icon: '<i class="fa fa-bookmark-o" aria-hidden="true"></i>' }
+        public: true
+
+    AppBundle\Admin\LectureAdmin:
+        arguments: [~, AppBundle\Entity\Lecture, AppBundle:Admin\LectureCRUD]
+        tags:
+          - { name: sonata.admin, manager_type: orm, group: Wykłady, label: Wykłady, on_top: true, icon: '<i class="fa fa-book" aria-hidden="true"></i>' }
+        public: true
+        calls:
+          - [ setTemplate, [list, Admin/Lecture/base_list.html.twig] ]
+
+    AppBundle\Admin\SlideAdmin:
+        arguments: [~, AppBundle\Entity\Slide, AppBundle:Admin\SlideCRUD]
+        tags:
+          - { name: sonata.admin, manager_type: orm, group: Slajdy, label: Slajdy, on_top: true, icon: '<i class="fa fa-tablet" aria-hidden="true"></i>' }
+        public: true
+
+    AppBundle\Admin\SlideAdmin:
+        arguments: [~, AppBundle\Entity\Slide, ~]
+        tags:
+          - { name: sonata.admin, manager_type: orm, group: Slajdy, label: Slajdy, on_top: true, icon: '<i class="fa fa-tablet" aria-hidden="true"></i>' }
+        public: true
+
+    AppBundle\Admin\KnowledgeBaseAdmin:
+        arguments: [~, AppBundle\Entity\KnowledgeBase, ~]
+        tags:
+          - { name: sonata.admin, manager_type: orm, group: Bazy wiedzy, label:  Bazy wiedzy, on_top: true, icon: '<i class="fa fa-archive" aria-hidden="true"></i>' }
+        public: true
+
+    AppBundle\Admin\PdfAdmin:
+        arguments: [~, AppBundle\Entity\Pdf, ~]
+        tags:
+          - { name: sonata.admin, manager_type: orm, group: PDF, label: PDF, show_in_dashboard: false }
+        public: true
+
+    AppBundle\Admin\QuestionAdmin:
+        arguments: [~, AppBundle\Entity\Question, ~]
+        tags:
+          - { name: sonata.admin, manager_type: orm, group: Pytania, label: Pytania, on_top: true, icon: '<i class="fa fa-question" aria-hidden="true"></i>' }
+        public: true
+
+    AppBundle\Admin\SurveyQuestionAdmin:
+        arguments: [~, AppBundle\Entity\SurveyQuestion, ~]
+        tags:
+          - { name: sonata.admin, manager_type: orm, group: Pytania ankietowe, label: Pytania ankietowe, show_in_dashboard: false}
+        public: true
+
+    AppBundle\Admin\PossibleAnswerAdmin:
+        arguments: [~, AppBundle\Entity\PossibleAnswer, ~]
+        tags:
+          - { name: sonata.admin, manager_type: orm, group: Możliwe odpowiedzi, label: Możliwe odpowiedzi, show_in_dashboard: false}
+        public: true
+
+    AppBundle\Admin\MediaAdmin:
+        arguments: [~, AppBundle\Entity\Media, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: Biblioteka mediów, label: Biblioteka mediów, on_top: true, icon: '<i class="fa fa-database" aria-hidden="true"></i>'  }
+        calls:
+            -
+              - setSubClasses
+              -
+                -
+                  image: AppBundle\Entity\Image
+                  html: AppBundle\Entity\Html
+                  pdf: AppBundle\Entity\Pdf
+                  survey: AppBundle\Entity\Survey
+        public: true
+
+# Entity Listeners
+
+    AppBundle\Listener\EntityListener\MediaListener:
+        public: true
+        tags:
+            - { name: "doctrine.orm.entity_listener" }
+
+    AppBundle\Listener\EntityListener\LectureListener:
+        public: true
+        arguments:
+            $sFactory: '@AppBundle\Factory\SlideFactory'
+        tags:
+            - { name: "doctrine.orm.entity_listener" }
+
+    AppBundle\Listener\EntityListener\QuestionListener:
+        public: true
+        arguments:
+            $lFactory: '@AppBundle\Factory\LectureFactory'
+            $pusher: '@gos_web_socket.zmq.pusher'
+        tags:
+            - { name: "doctrine.orm.entity_listener" }
+
+# Web Sockets
+
+    AppBundle\Topic\ConferenceTopic:
+        tags:
+            - { name: gos_web_socket.topic }
+
+    AppBundle\Rpc\ConferenceRpc:
+        tags:
+            - { name: gos_web_socket.rpc }
+
+# Factories
+
+    AppBundle\Factory\SuperFactory:
+        autowire: true
+        arguments:
+            $archiveTempDir : '%archive_temp_dir%'
+            $uploadDir : '%media_upload_dir%'
+
+    AppBundle\Factory\LectureFactory:
+        public: true
+        factory: AppBundle\Factory\SuperFactory:createFactory
+        arguments:
+            $modelClassName: 'AppBundle\Entity\Lecture'
+
+    AppBundle\Factory\SlideFactory:
+        public: true
+        factory: AppBundle\Factory\SuperFactory:createFactory
+        arguments:
+            $modelClassName: 'AppBundle\Entity\Slide'
+
+    AppBundle\Factory\SectionFactory:
+        public: true
+        factory: AppBundle\Factory\SuperFactory:createFactory
+        arguments:
+            $modelClassName: 'AppBundle\Entity\Section'
+
+    AppBundle\Factory\GuestFactory:
+        public: true
+        factory: AppBundle\Factory\SuperFactory:createFactory
+        arguments:
+            $modelClassName: 'AppBundle\Entity\Guest'
+
+    AppBundle\Factory\QuestionFactory:
+        public: true
+        factory: AppBundle\Factory\SuperFactory:createFactory
+        arguments:
+            $modelClassName: 'AppBundle\Entity\Question'
+
+    AppBundle\Factory\NoteFactory:
+        public: true
+        factory: AppBundle\Factory\SuperFactory:createFactory
+        arguments:
+            $modelClassName: 'AppBundle\Entity\Note'
+
+    AppBundle\Factory\SurveyAnswerFactory:
+        public: true
+        factory: AppBundle\Factory\SuperFactory:createFactory
+        arguments:
+            $modelClassName: 'AppBundle\Entity\SurveyAnswer'
+
+# Block Services
+
+    AppBundle\Block\ControlPanelBlockService:
+        arguments: [AppBundle\Block\ControlPanelBlockService, '@templating', '%control_panel_buttons_yaml_dir%']
+        tags:
+            - { name: sonata.block }
+        public: true
+        autowire: true
+
+

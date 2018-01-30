@@ -1,0 +1,14 @@
+gos_web_socket:
+    pushers:
+        zmq:
+            default: true
+            host: 127.0.0.1
+            port: 5555
+            persistent: true
+            protocol: tcp
+    server:
+        port: '%web_socket_port%'
+        host: '%web_socket_host%'
+        router:
+            resources:
+                - '@AppBundle/Resources/config/routing.yml'

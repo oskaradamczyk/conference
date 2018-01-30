@@ -1,0 +1,44 @@
+SINGLE_QUESTION_TYPE: Pytanie jednokrotnego wyboru
+security:
+    login:
+        header: Zaloguj się
+        submit: Login
+        username_placeholder: Nazwa użytkownika
+        password_placeholder: Hasło
+        caps_on: Caps Lock ON.
+Invalid credentials.: Nieprawidłowy login lub hasło.
+image: obraz
+pdf: pdf
+html: html
+survey: ankieta
+form:
+    success: Succesfully submitted.
+    not_submitted: Data not submitted.
+admin:
+    lecture:
+        last_indeactivable: Nie można dezaktywować ostatniego wykładu w sekcji
+    slide:
+        activate_label: Aktywuj slajdy
+        deactivate_label: Dezaktywuj slajdy
+        activate_success: Aktywacja przebiegła pomyślnie.
+        activate_failure: Aktywacja nie przebiegła pomyślnie.
+        deactivate_success: Deaktywacja przebiegła pomyślnie.
+        deactivate_failure: Deaktywacja nie przebiegła pomyślnie.
+    media:
+        proper_mime_type_invalid {{ valid }}: 'Niepoprawny format dodanego pliku. Dozwolone typy plików to: {{ valid }}'
+    lecture:
+        success: Poprawnie utworzono wykład.
+        import: Stwórz wykład z pliku .zip
+        import_submit: Stwórz
+        import_cancel: Anuluj
+    control_panel:
+        title: Panel zarządzania
+        button:
+            reload_conference: Przeładuj
+            reload_conference_hint: Przeładowuje trwającą konferencję na tabletach słuchaczy
+            clear_storage: Wyczyść
+            clear_storage_hint: Czyści sesje na tabletach słuchaczy
+            next_slide: Następny
+            next_slide_hint: Przełącza na następny slajd
+            prev_slide: Poprzedni
+            prev_slide_hint: Przełącza na poprzedni slajd

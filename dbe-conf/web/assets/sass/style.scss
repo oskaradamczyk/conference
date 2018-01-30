@@ -1,0 +1,332 @@
+body {
+  p {
+    font-size: 19px;
+  }
+}
+
+header {
+  background: #fff;
+  .container {
+    .row {
+      .col-md-12 {
+        position: relative;
+        padding: 20px 0;
+      }
+    }
+  }
+  .logo {
+    display: inline-block;
+  }
+}
+
+nav {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height:100%;
+  ul {
+    list-style-type: none;
+    height: 100%;
+    li {
+      height: 100%;
+      display: inline-block;
+      &:last-child {
+        margin-left: -4px;
+      }
+      a {
+        display: table;
+        padding: 0 45px;
+        height: 100%;
+        transition: 0.3s all;
+        font-weight: 600;
+        text-transform: uppercase;
+        span {
+          display: table-cell;
+          vertical-align: middle;
+        }
+        &.active {
+          color: #fff;
+          text-decoration: none;
+        }
+        &:hover {
+          text-decoration: none;
+        }
+      }
+    }
+  }
+}
+.center {
+  text-align:center;
+}
+#upcoming_event_container {
+  display: inline-block;
+  #upcoming_event_countdown {
+    margin-top: 40px;
+    .countdown_row {
+      .countdown_section:last-of-type {
+        margin-right:0;
+      }
+      .countdown_section {
+        @media screen and (max-width: 600px) {
+          width: 100%;
+        }
+        color: #fff;
+        width: auto;
+        height: 150px;
+        background: none;
+        font-weight: 400;
+        margin: 0;
+        margin-right: 30px;
+        &:last-child {
+          color: #fff;
+        }
+        &:after {
+          display: none;
+        }
+        .countdown_amount {
+          color: #fff;
+          font-size: 56px;
+          font-weight: normal;
+          background: url('../images/counter.png') no-repeat top left;
+          width: 70px;
+          margin-right: 5px;
+          margin-bottom: 24px;
+          line-height: 53px;
+          height: 90px;
+
+        }
+      }
+    }
+  }
+}
+.page {
+  background-size: cover;
+  background-repeat: no-repeat; 
+  background-position: center top;
+  .main {
+    min-height: 600px;
+    min-height: 75vh;
+    padding: 100px 0;
+    font-size: 19px;
+    &.questions {
+      li {
+        display: block;
+        border: 1px solid #fff;
+        padding: 25px 15px;
+        margin: 10px 0;
+        background: rgba(0,0,0,0.4);
+      }
+    }
+    &.container {
+      color: #fff;
+    }
+  }
+}
+#player {
+  margin: 100px 0;
+}
+#question-form {
+  margin: 100px 0;
+  .form-control {
+    border-radius: 0;
+  }
+  textarea {
+    resize: vertical;
+  }
+  .btn {
+    padding: 10px 25px;
+    text-transform: uppercase;
+    color: #fff;
+    border-radius: 0;
+    &:hover {
+      opacity:0.8;
+      color: #fff;
+    }
+  }
+}
+footer {
+  background: #fff;
+  color: #777;
+  padding: 20px 15px;
+  img {
+    margin-left: 20px;
+  }
+}
+
+h1 {
+  font-size: 47px;
+  text-transform: uppercase;
+  margin-bottom: 30px;
+  letter-spacing: 1px;
+}
+h3 {
+  font-size: 25px;
+  line-height: 35px;
+}
+
+@media screen and (max-width: 720px) {
+  .row {
+    margin: 0 !important;
+  }
+
+  header {
+    .container {
+      padding-right: 0;
+    }
+  }
+
+  #upcoming_event_container {
+    #upcoming_event_countdown {
+      .countdown_row {
+          display: flex;
+          flex-direction: column;
+
+          .countdown_section {
+            margin-right: 0;
+          }
+        }
+      }
+    }
+  }
+
+@media screen and (max-width: 520px) {
+  nav {
+    ul {
+      li {
+        a {
+          width: 100px;
+          padding: 0;
+          text-align: center;
+        }
+      }
+    }
+  }
+
+  header {
+    .container {
+      .row {
+        .col-md-12 {
+          padding: 10px 0;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 420px) {
+  nav {
+    ul {
+      li {
+        a {
+          width: 85px;
+        }
+      }
+    }
+  }
+
+  footer {
+    padding: 20px 0;
+  }
+}
+
+@media screen and (max-width: 325px) {
+  footer {
+    .col-md-12 {
+      text-align: center;
+      img {
+        margin: 0 auto;
+        display: block;
+        margin-top: 30px;
+      }
+    }
+  }
+}
+
+.loginmodal-container {
+  padding: 30px;
+  max-width: 350px;
+  width: 100% !important;
+  background-color: #F7F7F7;
+  margin: 0 auto;
+  border-radius: 2px;
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.loginmodal-container h1 {
+  text-align: center;
+  font-size: 1.8em;
+}
+
+.loginmodal-container input[type=submit] {
+  width: 100%;
+  display: block;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.loginmodal-container input[type=text], input[type=password] {
+  height: 44px;
+  font-size: 16px;
+  width: 100%;
+  margin-bottom: 10px;
+  -webkit-appearance: none;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  border-top: 1px solid #c0c0c0;
+  /* border-radius: 2px; */
+  padding: 0 8px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
+.loginmodal-container input[type=text]:hover, input[type=password]:hover {
+  border: 1px solid #b9b9b9;
+  border-top: 1px solid #a0a0a0;
+  -moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.loginmodal-submit {
+  /* border: 1px solid #3079ed; */
+  border: 0px;
+  color: #fff;
+  text-shadow: 0 1px rgba(0, 0, 0, 0.1);
+  background-color: #4d90fe;
+  padding: 17px 0px;
+  font-size: 14px;
+  cursor: pointer;
+  /* background-image: -webkit-gradient(linear, 0 0, 0 100%,   from(#4d90fe), to(#4787ed)); */
+}
+
+.loginmodal-submit:hover, .loginmodal-submit:focus, .loginmodal-submit:active  {
+  /* border: 1px solid #2f5bb7; */
+  border: 0px;
+  outline: none;
+  text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+  background-color: #357ae8;
+  /* background-image: -webkit-gradient(linear, 0 0, 0 100%,   from(#4d90fe), to(#357ae8)); */
+}
+
+.loginmodal-container a {
+  text-decoration: none;
+  color: #666;
+  font-weight: 400;
+  text-align: center;
+  display: inline-block;
+  opacity: 0.6;
+  transition: opacity ease 0.5s;
+}
+
+.modal-dialog:focus, .modal.fade {
+  outline: none !important;
+}
+
+.error-login {
+  color: red;
+}
+
+.error-login > .loginmodal-container {
+  padding-top: 0px !important;
+}

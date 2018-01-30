@@ -1,0 +1,21 @@
+{% macro button(value, route, routeParams = [], title, buttonClass, containerClass) %}
+    <div class="col-xs-4 col-sm-3 col-md-4 col-lg-3 text-center {{ containerClass }}">
+        <button type="submit" data-action="{{ url(route, routeParams) }}" title="{{ title|trans }}" class="btn btn-default panel-btn {{ buttonClass }}">{{ value|trans }}</button>
+    </div>
+{% endmacro %}
+
+{% macro buttons(buttons) %}
+    {% for button in buttons %}
+        {% if button.buttonClass is not defined %}
+            {% set buttonClass = null %}
+        {% else %}
+            {% set buttonClass = button.buttonClass %}
+        {% endif %}
+        {% if button.containerClass is not defined %}
+            {% set containerClass = null %}
+        {% else %}
+            {% set containerClass = button.containerClass %}
+        {% endif %}
+        {{ _self.button(button.value, button.route, button.routeParams, button.title, buttonClass, containerClass) }}
+    {% endfor %}
+{% endmacro %}

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+    <file source-language="en" datatype="plaintext" original="SonataAdminBundle.en.xliff">
+        <body>
+            <trans-unit id="title_select_subclass">
+                <source>title_select_subclass</source>
+                <target>Wybierz typ</target>
+            </trans-unit>
+            <trans-unit id="no_subclass_available">
+                <source>no_subclass_available</source>
+                <target>Podtyp niedozwolony</target>
+            </trans-unit>
+            <trans-unit id="label_unknown_user">
+                <source>label_unknown_user</source>
+                <target>Nieznany użytkownik</target>
+            </trans-unit>
+            <trans-unit id="read_more">
+                <source>read_more</source>
+                <target>rozwiń</target>
+            </trans-unit>
+            <trans-unit id="read_less">
+                <source>read_less</source>
+                <target>zwiń</target>
+            </trans-unit>
+            <trans-unit id="image">
+                <source>image</source>
+                <target>obraz</target>
+            </trans-unit>
+            <trans-unit id="pdf">
+                <source>pdf</source>
+                <target>pdf</target>
+            </trans-unit>
+            <trans-unit id="html">
+                <source>html</source>
+                <target>html</target>
+            </trans-unit>
+            <trans-unit id="survey">
+                <source>survey</source>
+                <target>ankietę</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

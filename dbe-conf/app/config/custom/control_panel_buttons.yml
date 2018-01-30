@@ -1,0 +1,30 @@
+reload_conference:
+    value: admin.control_panel.button.reload_conference
+    containerClass: testCont
+    buttonClass: btn-danger
+    route: conference_operation
+    title: admin.control_panel.button.reload_conference_hint
+    routeParams:
+        operation: reload
+
+clear_storage:
+    value: admin.control_panel.button.clear_storage
+    buttonClass: btn-danger
+    route: conference_operation
+    title: admin.control_panel.button.clear_storage_hint
+    routeParams:
+        operation: clear
+
+prev_slide:
+    value: admin.control_panel.button.prev_slide
+    route: conference_operation
+    title: admin.control_panel.button.prev_slide_hint
+    routeParams:
+        operation: prev_slide
+
+next_slide:
+    value: admin.control_panel.button.next_slide
+    route: conference_operation
+    title: admin.control_panel.button.next_slide_hint
+    routeParams:
+        operation: next_slide

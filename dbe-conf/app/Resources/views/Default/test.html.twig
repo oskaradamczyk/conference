@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/swiper.min.css') }}">
+
+    <script src="{{ asset('js/jquery.js') }}"></script>
+    <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        html, body {
+            max-height: 100vh;
+            overflow: hidden;
+            margin: 0;
+            padding:0;
+            background: #0462d1;
+        }
+
+        .swiper-slide.locked-slide:after {
+            display: block;
+            background: #0462d1;
+            width: 100%;
+            height: 100%;
+            content: " ";
+            opacity:0.9;
+        }
+        #live {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 50px;
+            height: 50px;
+            background: red;
+            color: #fff;
+            cursor: pointer;
+            z-index: 999;
+            text-align: center;
+            border-radius: 50%;
+            line-height: 50px;
+        }
+
+        #knowledgebaseButton {
+            position: fixed;
+            top: 50px;
+            left: 0;
+            width: 50px;
+            height: 50px;
+            background: red;
+            color: #fff;
+            cursor: pointer;
+            z-index: 999;
+            text-align: center;
+            border-radius: 50%;
+            line-height: 50px;
+        }
+        #notesButton {
+            position: fixed;
+            top: 100px;
+            left: 0;
+            width: 50px;
+            height: 50px;
+            background: red;
+            color: #fff;
+            cursor: pointer;
+            z-index: 999;
+            text-align: center;
+            border-radius: 50%;
+            line-height: 50px;
+        }
+        #live.not-live {
+            background: #ccc;
+        }
+        .swiper-slide {
+            height: 100vh;
+            width: 100vw;
+            background-size: cover;
+            background-position: center center;
+        }
+        .app-modal {
+            width: 100%;
+            height: 100%;
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: #0462d1;
+            color: #fff;
+            display: none;
+        }
+        .register {
+            z-index: 4;
+            padding-top: 290px;
+        }
+        .knowledgebase, .notes {
+            z-index: 2;
+        }
+    </style>
+</head>
+{{ form_start(form) }}
+{{ form_rest(form) }}
+<input type="submit">
+{{ form_end(form) }}
+
+
+<script src="{{ asset('js/swiper.js') }}"></script>
+{{ ws_client() }}
+<script>
+    var live = true;
+    sessionStorage.clear();
+    $('.register').slideDown();
+    $(document).ready(function(){
+
+        $.get( "{{ path('get_section') }}", function( data ) {
+            console.log(data);
+            $.each(data.knowledge_base.medias, function( index, value ) {
+                console.log(value);
+                $('.knowledgebase-list').append('<li>'+value.name+' <button class="order-file btn btn-lg btn-primary btn-block" data-file-id="'+value.id+'" type="button">Zamów</button></li>');
+            });
+        });
+
+        var mySwiper = new Swiper ('.swiper-container', {});
+        var jqxhr = $.get( "{{ path('get_lecture') }}", function(data) {
+            console.log(data);
+            $.each(data.slides, function( index, value ) {
+                console.log(value);
+                var slideClass;
+
+                console.log(sessionStorage);
+                if (!value.active) {
+                    slideClass = 'locked-slide';
+                }
+                else {
+                    sessionStorage.setItem('active',index+1);
+
+                }
+                console.log(sessionStorage.getItem('active'));
+                $('.swiper-wrapper').append('<div class="swiper-slide img-slide '+slideClass+'" data-id="'+value.id+'" style="background-image: url('+value.media.file_url+');"></div>');
+            });
+        })
+            .done(function () {
+                mySwiper.update();
+                mySwiper.slideTo(sessionStorage.getItem('active')-1,0,false);
+                console.log('Slides Loaded.');
+                $('#live').removeClass('not-live');
+            })
+            .fail(function(e) {
+                alert( "error" );
+                console.log(e);
+            });
+        mySwiper.on('slideChangeTransitionEnd', function () {
+            live = false;
+            $('#live').addClass('not-live');
+            if($('.swiper-slide-active').hasClass('locked-slide')) {
+                mySwiper.allowSlideNext = false;
+            }
+            else {
+                mySwiper.allowSlideNext = true;
+            }
+        });
+
+
+        var webSocket = WS.connect("ws://10.1.2.32:81/ws/");
+
+        webSocket.on("socket/connect", function(session){
+            console.log("Successfully Connected!");
+
+            session.subscribe("conference/channel", function(uri, payload){
+                console.log("Received message", payload.msg);
+                if(payload.msg.action == 'next_slide') {
+                    sessionStorage.setItem('active',parseInt(sessionStorage.getItem('active'))+1);
+                    $($('.swiper-slide')[parseInt(sessionStorage.getItem('active'))-1]).removeClass('locked-slide');
+                    if(live) {
+                        mySwiper.slideNext(300,false);
+                    }
+                    mySwiper.allowSlideNext = true;
+                }
+                else if (payload.msg.action == 'prev_slide') {
+                    sessionStorage.setItem('active',parseInt(sessionStorage.getItem('active'))-1);
+
+                    if(live) {
+                        mySwiper.slidePrev(300,false);
+                    }
+                }
+            });
+            session.publish("conference/channel", "This is a message!");
+        });
+
+
+        webSocket.on("socket/disconnect", function(error){
+            console.log("Disconnected for " + error.reason + " with code " + error.code);
+        });
+
+        $('#live').click(function () {
+            live = true;
+            $(this).removeClass('not-live');
+            mySwiper.slideTo(sessionStorage.getItem('active')-1,300,false);
+            mySwiper.allowSlideNext = true;
+
+        });
+
+        $('.open-modal').click(function () {
+            var that = this;
+            console.log('click!');
+            $('.app-modal').slideUp(300, function () {
+                $('.'+$(that).data('target')).slideDown();
+            });
+
+        });
+        $('#register-guest').submit(function (e) {
+            e.preventDefault();
+            $('.register .btn').attr('disabled',true);
+            $.post( "{{ path('post_guest') }}", { 'guest[email]': $('#inputEmail').val()})
+                .done(function( data ) {
+                    sessionStorage.setItem("guest_id",data.data.id);
+                    console.log(data.data.id);
+                    $('.register').slideUp();
+                })
+                .fail(function (data) {
+                    $('.register .btn').attr('disabled',false);
+                });
+
+        });
+
+        $('#note').submit(function (e) {
+            e.preventDefault();
+            $('#note .btn').attr('disabled',true);
+            $.post( "{{ path('post_note') }}", {
+                'note[guest]': sessionStorage.getItem('guest_id'),
+                'note[slide]': $('.swiper-slide-active').data('id'),
+                'note[content]': 'test'
+            })
+                .done(function() {
+                    $('.notes').slideUp();
+                    $('#note .btn').attr('disabled',false);
+                })
+                .fail(function (data) {
+                    $('#note .btn').attr('disabled',false);
+                });
+
+        });
+
+
+
+        $('.knowledgebase-list').on('click', 'button.order-file', function(e){
+            e.preventDefault();
+            var that = this;
+            var obj = new Object();
+            obj["id"] = 1;
+            obj["orders"] = [];
+            obj["orders"].push($(that).data('file-id'));
+            $.ajax({
+                url: "{{ path('patch_guest') }}",
+                type: 'PATCH',
+                data: obj,
+                success: function() {
+                    $(that).attr('disabled',true);
+                    $(that).text('Zamówiony');
+                }
+            });
+        });
+    });
+
+</script>
+</body>
+</html>

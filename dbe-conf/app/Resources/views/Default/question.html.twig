@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link rel="stylesheet" href="{{ asset('css/swiper.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, maximum-scale=1.0">
+    <script src="{{ asset('js/jquery.js') }}"></script>
+    <style>
+        html, body {
+            max-height: 100vh;
+            overflow: hidden;
+            margin: 0;
+            padding:0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Pytania</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+        <table class="table">
+            <thead class="thead-dark">
+                <th width="75%">Pytanie</th>
+                <th></th>
+            </thead>
+            <tbody class="questions-list">
+            </tbody>
+        </table>
+        </div>
+    </div>
+</div>
+<script src="{{ asset('js/websocket.js') }}"></script>
+{{ ws_client() }}
+<script>
+    var ws = WS.connect("ws://" + websocketUrl + "/ws/");
+    ws.on("socket/connect", function(session){
+        console.log("Connected");
+        session.subscribe("conference/channel", function(uri, payload){
+            console.log(payload.msg);
+            if(payload.msg.question_updated) {
+                var question = JSON.parse(payload.msg.question_updated);
+                console.log(question);
+                if(question.accepted) {
+                    $('.questions-list').append('<tr><td>'+ question.content +' </td><td class="text-right"><button type="button" data-id="' + question.id + '" class="btn btn-lg btn-primary">Odpowiedziałem</button></td></tr>')
+                }
+                else {
+                    $($('.btn[data-id='+question.id+']')[0]).parent().parent().remove();
+                }
+            }
+        });
+
+    });
+
+    $(document).ready(function () {
+        $.get( "{{ path('get_section') }}")
+            .done(function( data ) {
+                $.get( "{{ path('get_question') }}", { section: data.id } )
+                    .done(function( data ) {
+                        console.log(data);
+                        $.each(data, function( index, value ) {
+                            console.log(value);
+                            $('.questions-list').append('<tr><td>'+ value.content +' </td><td class="text-right"><button type="button" data-id="' + value.id + '" class="btn btn-lg btn-primary">Odpowiedziałem</button></td></tr>')
+                        });
+                    });
+            });
+
+        $('.questions-list').on('click', '.btn', function (e) {
+            console.log(e);
+            console.log('click');
+            $(this).attr('disabled',true).text('Odpowiedziane');
+            var that = this;
+            $.ajax({
+                url: "{{ path('patch_question') }}",
+                type: 'PATCH',
+                data: {
+                    id: $(that).data('id'),
+                    question: {
+                        answered: 1
+                    }
+                },
+                success: function() {
+                    $(that).parent().parent().remove();
+                }
+            });
+        })
+
+    });
+
+</script>
+</body>
+</html>

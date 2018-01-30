@@ -1,0 +1,58 @@
+<style>
+    @import url(http://fonts.googleapis.com/css?family=Roboto);
+
+    .modal.fade {
+        font-family: roboto;
+    }
+
+    .text-center {
+        padding-top: 10px;
+        font-family: roboto;
+        text-align: center;
+    }
+</style>
+<script src="{{ asset('assets/js/capslock/capslock.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/js/jquery/jquery.min.js') }}" type="text/javascript"></script>
+<script>
+    $(document).ready(function () {
+        CapsLock.addListener(function (isOn) {
+            if (isOn) {
+                $('.hint-helper').show();
+            } else {
+                $('.hint-helper').hide();
+            }
+        });
+    })
+</script>
+<link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+<div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="loginmodal-container">
+            <h1>{{ 'security.login.header'|trans }}</h1><br>
+            <form action="{{ path("fos_user_security_check") }}" method="post" novalidate="novalidate">
+                {% if csrf_token %}
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token }}"/>
+                {% endif %}
+                <input type="text" id="username" name="_username" value="{{ last_username }}" required="required"
+                       placeholder="{{ 'security.login.username_placeholder'|trans }}"/>
+                <input type="password" id="password" name="_password" required="required" placeholder="{{ 'security.login.password_placeholder'|trans }}"/>
+                <div class="hint-helper">{{ 'security.login.caps_on'|trans }}</div>
+                <input type="submit" id="_submit" class="login loginmodal-submit" name="_submit"
+                       value="{{ 'security.login.submit'|trans }}"/>
+            </form>
+        </div>
+    </div>
+</div>
+{% for flashMessage in app.session.flashbag.get('info') %}
+    <div class="text-center">{{ flashMessage }}</div>
+{% endfor %}
+{% if error %}
+    <div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="false">
+        <div class="modal-dialog error-login">
+            <div class="loginmodal-container">
+                {{ error.messageKey|trans }}
+            </div>
+        </div>
+    </div>
+{% endif %}

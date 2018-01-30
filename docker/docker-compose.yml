@@ -1,0 +1,53 @@
+
+version: '2'
+
+services:
+    phpunit:
+        image: sichiro/php7-cli-phpunit-xdebug # our PHPUnit image, created or found on Docker Hub
+        volumes:
+          - /tmp/:/tmp/ # linking /tmp/ folder because PHPStorm stores its stuff there
+        depends_on:
+          - mysql
+        links:
+          - mysql
+    mysql:
+        build: ./mysql/
+        environment:
+          - MYSQL_ROOT_PASSWORD=secret
+        volumes:
+            - ./db:/var/lib/mysql
+        ports:
+            - '3306:3306'
+    app:
+        image: php:7.1-fpm
+        volumes:
+            - ../dbe-conf:/var/www/html/dbe-conf
+            - ./logs:/var/log/apache2/logs
+        command: "true"
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        ports:
+            - 8089:80
+        links:
+            - mysql
+        environment:
+            PMA_HOST: mysql
+        volumes:
+            - ./pma/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
+
+    php:
+        build: ./php/
+        links:
+            - mysql
+        volumes_from:
+            - app
+        volumes:
+            - ./php/.ssh/:/root/.ssh/
+        ports:
+            - "81:80"
+            - "443:443"
+            - "8080:8080"
+        hostname: cm-developer
+        environment:
+            DOCKER_HOST: DOCKER_HOST

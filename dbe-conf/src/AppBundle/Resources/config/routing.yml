@@ -1,0 +1,9 @@
+conference_topic:
+    channel: conference/channel
+    handler:
+        callback: 'conference.topic'
+
+conference_rpc:
+    channel: topic/{method}
+    handler:
+        callback: 'conference.rpc'

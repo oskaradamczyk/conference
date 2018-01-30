@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link rel="stylesheet" href="{{ asset('css/swiper.min.css') }}">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="{{ asset('js/websocket.js') }}"></script>
+    <script src="{{ asset('js/jquery.js') }}"></script>
+    <style>
+        html, body {
+            max-height: 100vh;
+            overflow: hidden;
+            margin: 0;
+            padding:0;
+        }
+        .swiper-slide {
+            height: 100vh;
+            width: 100vw;
+            background-size: cover;
+            background-position: center center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="swiper-container">
+    <div class="swiper-wrapper"></div>
+</div>
+<script src="{{ asset('js/swiper.js') }}"></script>
+<script>
+    var mySwiper = new Swiper ('.swiper-container', {});
+</script>
+{{ ws_client() }}
+<script>
+    $(document).ready(function () {
+        var slides_count;
+        var lectureId;
+        sessionStorage.clear();
+        var mySwiper = new Swiper ('.swiper-container', {
+            'allowTouchMove' : false,
+            'noSwiping': true
+        });
+        var jqxhr = $.get( "{{ path('get_lecture') }}", function(data) {
+            console.log(data);
+            slides_count = data.slide_count;
+            lectureId = data.id;
+            $.each(data.slides, function( index, value ) {
+                if (value.active) {
+                    sessionStorage.setItem('active',index+1);
+                }
+
+                if (value.type === "{{ constant('AppBundle\\Entity\\Survey::MEDIA_TYPE') }}") {
+                    var form = '<div class="swiper-slide survey-slide" data-id="' + value.id + '">'
+                        + '<form id="submit-answer" class="">'
+                        + '<div class="survey-name"><h1 class="title">' + value.media.name + '</h1></div>';
+                    $.each(value.media.questions, function (index, value) {
+                        form += '<div class="question" data-id="' + value.id + '"><h3 class="question-title">' + value.content + '</h3>';
+                        var inputType;
+                        if (value.type === "{{ constant('AppBundle\\Entity\\SurveyQuestion::SINGLE_QUESTION_TYPE') }}") {
+                            inputType = 'radio';
+                        } else {
+                            {# TODO others types of survey question #}
+                        }
+                        $.each(value.possible_answers, function (index, value) {
+                            form += '<input type="' + inputType + '" class="possible-answer" data-id="' + value.id + '">' + value.content + '</input>';
+                        });
+                        form += '</div>';
+                    });
+                    form += ' <button class="btn btn-lg btn-primary btn-block survey-answer-btn" disabled type="submit">Odpowiedz</button></form></div>';
+                    $('.swiper-wrapper').append(form);
+                } else if (value.type === "{{ constant('AppBundle\\Entity\\Image::MEDIA_TYPE') }}") {
+                    $('.swiper-wrapper').append('<div class="swiper-slide img-slide" data-id="' + value.id + '" style="background-image: url(' + value.media.file_url + ');"></div>');
+                } else {
+                    $('.swiper-wrapper').append('<div class="swiper-slide html-slide" data-id="' + value.id + '">' + value.media.content + '</div>');
+                }
+            });
+        })
+            .done(function () {
+                mySwiper.update();
+                mySwiper.slideTo(sessionStorage.getItem('active')-1,0,false);
+                console.log('Slides Loaded.');
+            })
+            .fail(function(e) {
+                alert( "error" );
+                console.log(e);
+            });
+
+        var webSocket = WS.connect("ws://"+websocketUrl+"/ws/");
+
+        webSocket.on("socket/connect", function(session){
+            session.subscribe("conference/channel", function(uri, payload){
+                console.log("Received message", payload.msg);
+                if(payload.msg.action == 'next_slide') {
+                    mySwiper.slideNext();
+                    $.ajax({
+                        url: "{{ path('patch_slide') }}",
+                        type: 'PATCH',
+                        data: { id: $('.swiper-slide-active').data('id'), 'slide[active]': 1} ,
+                        success: function() {
+                            console.log("Activated slide: " + sessionStorage.getItem('active'));
+                        }
+                    });
+                }
+                else if (payload.msg.action == 'prev_slide') {
+                    $.ajax({
+                        url: "{{ path('patch_slide') }}",
+                        type: 'PATCH',
+                        data: { id: $('.swiper-slide-active').data('id'), 'slide[active]': 0} ,
+                        success: function() {
+                            console.log("Deactivated slide: " + sessionStorage.getItem('active'));
+                        }
+                    });
+                    mySwiper.slidePrev();
+
+                }
+            });
+
+            document.onkeydown = checkKey;
+            function checkKey(e) {
+                e = e || window.event;
+                var isSurvey = $('.swiper-slide-active').next().hasClass('survey-slide');
+
+                if (e.keyCode == '37' && sessionStorage.getItem('active') > 1) {
+
+                    session.publish("conference/channel", {action: "prev_slide"});
+                    sessionStorage.setItem('active',parseInt(sessionStorage.getItem('active'))-1);
+
+                }
+                else if (e.keyCode == '39' && sessionStorage.getItem('active') < slides_count) {
+                    sessionStorage.setItem('active',parseInt(sessionStorage.getItem('active'))+1);
+                    session.publish("conference/channel", {action: "next_slide", forceLive: isSurvey});
+
+                }
+                else if (e.keyCode == '39' && sessionStorage.getItem('active') == slides_count) {
+                    $.ajax({
+                        url: "{{ path('patch_lecture') }}",
+                        type: 'PATCH',
+                        data: {
+                            id: lectureId,
+                            lecture: {
+                                active: 0
+                            }
+                        },
+                        success: function(data) {
+                            session.publish("conference/channel", {action: "reload"});
+                            window.location.reload();
+                        }
+                    });
+                }
+            }
+
+        });
+
+        webSocket.on("socket/disconnect", function(error){
+            console.log("Disconnected for " + error.reason + " with code " + error.code);
+        });
+    });
+
+
+</script>
+
+</body>
+</html>
